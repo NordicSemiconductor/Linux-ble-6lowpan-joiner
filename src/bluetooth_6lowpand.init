@@ -1,0 +1,41 @@
+#!/bin/sh
+# Copyright (C) 2015 Nordic Semiconductor
+
+DAEMON=/usr/sbin/bluetooth_6lowpand
+DESC=bluetooth_6lowpand
+
+case $1 in
+  start)
+	modprobe bluetooth_6lowpan
+	sleep 1
+	if [ -f "/sys/kernel/debug/bluetooth/6lowpan_enable" ]
+	then
+	  echo 1 > /sys/kernel/debug/bluetooth/6lowpan_enable
+	else
+	  echo 35 > /sys/kernel/debug/bluetooth/6lowpan_psm
+	fi
+	hciconfig hci0 reset
+	sleep 1
+	killall bluetoothd
+	bluetooth_6lowpand -w 3 -t 5 -a $2 -d
+  ;;
+  stop)
+	killall -9 bluetooth_6lowpand
+  ;;
+  restart|force-reload)
+	$0 stop
+	sleep 1
+	$0 start $2
+  ;;
+  status)
+	status_of_proc "$DAEMON" "$DESC" && exit 0 || exit $?
+  ;;
+  *)
+	N=/etc/init.d/bluetooth_6lowpand
+	echo "Usage: $N {start|stop|restart|force-reload|status}" >&2
+	exit 1
+	;;
+esac
+
+exit 0
+

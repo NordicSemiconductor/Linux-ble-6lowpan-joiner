@@ -1,0 +1,3 @@
+[submodule "src/bluez"]
+	path = src/bluez
+	url = https://kernel.googlesource.com/pub/scm/bluetooth/bluez.git
