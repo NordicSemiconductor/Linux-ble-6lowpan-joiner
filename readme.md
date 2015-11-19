@@ -96,6 +96,7 @@ How to Build
  -  The last step is to copy the init.d script and create a file for the whitelist (if needed).
 
         $ cp ../bluetooth_6lowpand.init /etc/init.d/bluetooth_6lowpand
+        $ chmod 755 /etc/init.d/bluetooth_6lowpand
         $ mkdir /etc/config
         $ touch /etc/config/bluetooth_6lowpand.conf
 
