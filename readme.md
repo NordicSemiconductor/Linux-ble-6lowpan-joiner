@@ -161,7 +161,7 @@ How to Build
  -  Login to the router and install the related packages:
 
         $ opkg update
-        $ opkg install kmod-bluetooth kmod-bluetooth_6lowpan
+        $ opkg install kmod-bluetooth kmod-bluetooth_6lowpan kmod-usb-ohci
 
 
  -  Copy the bluez-utils_5.30-1_XXX.ipk file into the router and Install the bluez-util package:
