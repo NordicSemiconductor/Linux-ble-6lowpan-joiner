@@ -48,7 +48,7 @@ new file mode 100644
 index 0000000..4654f84
 --- /dev/null
 +++ b/utils/bluez/patches/202-bluetooth_6lowpan.patch
-@@ -0,0 +1,1363 @@
+@@ -0,0 +1,1361 @@
 +--- /dev/null
 ++++ b/tools/bluetooth_6lowpand.c
 +@@ -0,0 +1,1254 @@
@@ -880,8 +880,6 @@ index 0000000..4654f84
 ++					else
 ++						printf("Device %s connect fail!\n", addr);
 ++				}
-++
-++				continue;
 ++			}
 ++		}
 ++

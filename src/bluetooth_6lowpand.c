@@ -826,8 +826,6 @@ static void process_6lowpan(char *hci_id, bool use_whitelist)
 					else
 						printf("Device %s connect fail!\n", addr);
 				}
-
-				continue;
 			}
 		}
 
