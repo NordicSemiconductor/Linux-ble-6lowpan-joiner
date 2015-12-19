@@ -122,8 +122,8 @@ index 0000000..4654f84
 ++#define DEVICE_ADDR_LEN		  18
 ++
 ++#define CONTROLLER_PATH		  "/sys/kernel/debug/bluetooth/6lowpan_control"
-++#define CONFIG_PATH		  "/etc/config/bluetooth_6lowpand.conf"
-++#define CONFIG_SWP_PATH		  "/etc/config/bluetooth_6lowpand.conf.swp"
+++#define CONFIG_PATH		  "/etc/bluetooth/bluetooth_6lowpand.conf"
+++#define CONFIG_SWP_PATH		  "/etc/bluetooth/bluetooth_6lowpand.conf.swp"
 ++#define CONFIG_LINE_MAX		  256
 ++
 ++#define AUTH_SSID_MAX_LEN	  16  /* 16 characters of Service Set Identifier. */
