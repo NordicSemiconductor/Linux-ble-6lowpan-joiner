@@ -1,0 +1,14 @@
+diff --git a/package/libs/openssl/Makefile b/package/libs/openssl/Makefile
+index 6909f97..23081f4 100644
+--- a/package/libs/openssl/Makefile
++++ b/package/libs/openssl/Makefile
+@@ -17,7 +17,8 @@ PKG_BUILD_PARALLEL:=1
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+ PKG_SOURCE_URL:=http://www.openssl.org/source/ \
+ 	ftp://ftp.funet.fi/pub/crypt/mirrors/ftp.openssl.org/source \
+-	ftp://ftp.sunet.se/pub/security/tools/net/openssl/source/
++	ftp://ftp.sunet.se/pub/security/tools/net/openssl/source/ \
++	http://ftp.vim.org/security/openssl/
+ PKG_MD5SUM:=5262bfa25b60ed9de9f28d5d52d77fc5
+ 
+ PKG_LICENSE:=OpenSSL

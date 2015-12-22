@@ -1,26 +1,26 @@
-diff --git a/utils/bluez/Makefile b/utils/bluez/Makefile
-index 4865698..a9ee09c 100644
---- a/utils/bluez/Makefile
-+++ b/utils/bluez/Makefile
+diff --git a/feeds/packages/utils/bluez/Makefile b/feeds/packages/utils/bluez/Makefile
+index 4865698..3a87fd4 100644
+--- a/feeds/packages/utils/bluez/Makefile
++++ b/feeds/packages/utils/bluez/Makefile
 @@ -124,6 +124,10 @@ define Package/bluez-utils/install
  	$(INSTALL_DATA) $(PKG_BUILD_DIR)/profiles/proximity/proximity.conf $(1)/etc/bluetooth/proximity.conf
  	$(INSTALL_DIR) $(1)/etc/init.d
  	$(INSTALL_BIN) ./files/bluetoothd.init $(1)/etc/init.d/bluetoothd
 +	$(INSTALL_DIR) $(1)/etc/init.d
 +	$(INSTALL_BIN) ./files/bluetooth_6lowpand.init $(1)/etc/init.d/bluetooth_6lowpand
-+	$(INSTALL_DIR) $(1)/etc/config
-+	$(INSTALL_DATA) ./files/bluetooth_6lowpand.conf $(1)/etc/config/
++	$(INSTALL_DIR) $(1)/etc/bluetooth
++	$(INSTALL_DATA) ./files/bluetooth_6lowpand.conf $(1)/etc/bluetooth/
  endef
  
  $(eval $(call BuildPackage,bluez-examples))
-diff --git a/utils/bluez/files/bluetooth_6lowpand.conf b/utils/bluez/files/bluetooth_6lowpand.conf
+diff --git a/feeds/packages/utils/bluez/files/bluetooth_6lowpand.conf b/feeds/packages/utils/bluez/files/bluetooth_6lowpand.conf
 new file mode 100644
 index 0000000..e69de29
-diff --git a/utils/bluez/files/bluetooth_6lowpand.init b/utils/bluez/files/bluetooth_6lowpand.init
+diff --git a/feeds/packages/utils/bluez/files/bluetooth_6lowpand.init b/feeds/packages/utils/bluez/files/bluetooth_6lowpand.init
 new file mode 100644
 index 0000000..cd9b3b4
 --- /dev/null
-+++ b/utils/bluez/files/bluetooth_6lowpand.init
++++ b/feeds/packages/utils/bluez/files/bluetooth_6lowpand.init
 @@ -0,0 +1,21 @@
 +#!/bin/sh /etc/rc.common
 +# Copyright (C) 2015 Nordic Semiconductor
@@ -43,27 +43,155 @@ index 0000000..cd9b3b4
 +	echo "stop bluetooth_6lowpand"
 +	killall -9 bluetooth_6lowpand
 +}
-diff --git a/utils/bluez/patches/202-bluetooth_6lowpan.patch b/utils/bluez/patches/202-bluetooth_6lowpan.patch
+diff --git a/feeds/packages/utils/bluez/patches/202-bluetooth_6lowpand.patch b/feeds/packages/utils/bluez/patches/202-bluetooth_6lowpand.patch
 new file mode 100644
-index 0000000..4654f84
+index 0000000..d5ec4d4
 --- /dev/null
-+++ b/utils/bluez/patches/202-bluetooth_6lowpan.patch
-@@ -0,0 +1,1361 @@
++++ b/feeds/packages/utils/bluez/patches/202-bluetooth_6lowpand.patch
+@@ -0,0 +1,1383 @@
++diff --git a/Makefile.in b/Makefile.in
++index f3e1df3..6dbb929 100644
++--- a/Makefile.in
+++++ b/Makefile.in
++@@ -124,6 +124,7 @@ DIST_COMMON = README $(am__configure_deps) $(am__include_HEADERS_DIST) \
++ @EXPERIMENTAL_TRUE@	tools/oobtest tools/seq2bseq tools/ibeacon \
++ @EXPERIMENTAL_TRUE@	tools/btgatt-client tools/btgatt-server
++ @TOOLS_TRUE@am__append_17 = tools/hciattach tools/hciconfig tools/hcitool tools/hcidump \
+++@TOOLS_TRUE@			tools/bluetooth_6lowpand \
++ @TOOLS_TRUE@			tools/rfcomm tools/rctest tools/l2test tools/l2ping \
++ @TOOLS_TRUE@			tools/sdptool tools/ciptool tools/bccmd \
++ @TOOLS_TRUE@			tools/bluemoon tools/hex2hcd tools/mpris-proxy
++@@ -383,6 +384,7 @@ src_libshared_mainloop_la_OBJECTS =  \
++ @CLIENT_TRUE@am__EXEEXT_1 = client/bluetoothctl$(EXEEXT)
++ @MONITOR_TRUE@am__EXEEXT_2 = monitor/btmon$(EXEEXT)
++ @TOOLS_TRUE@am__EXEEXT_3 = tools/hciattach$(EXEEXT) \
+++@TOOLS_TRUE@	tools/bluetooth_6lowpand$(EXEEXT) \
++ @TOOLS_TRUE@	tools/hciconfig$(EXEEXT) tools/hcitool$(EXEEXT) \
++ @TOOLS_TRUE@	tools/hcidump$(EXEEXT) tools/rfcomm$(EXEEXT) \
++ @TOOLS_TRUE@	tools/rctest$(EXEEXT) tools/l2test$(EXEEXT) \
++@@ -1191,6 +1193,9 @@ am__tools_hcitool_SOURCES_DIST = tools/hcitool.c src/oui.h src/oui.c
++ @TOOLS_TRUE@	src/oui.$(OBJEXT)
++ tools_hcitool_OBJECTS = $(am_tools_hcitool_OBJECTS)
++ @TOOLS_TRUE@tools_hcitool_DEPENDENCIES = lib/libbluetooth-internal.la
+++tools_bluetooth_6lowpand_SOURCES = tools/bluetooth_6lowpand.c
+++tools_bluetooth_6lowpand_OBJECTS = tools/bluetooth_6lowpand.$(OBJEXT)
+++@TOOLS_TRUE@tools_bluetooth_6lowpand_DEPENDENCIES = lib/libbluetooth-internal.la
++ am__tools_hex2hcd_SOURCES_DIST = tools/hex2hcd.c
++ @TOOLS_TRUE@am_tools_hex2hcd_OBJECTS = tools/hex2hcd.$(OBJEXT)
++ tools_hex2hcd_OBJECTS = $(am_tools_hex2hcd_OBJECTS)
++@@ -1519,6 +1524,7 @@ SOURCES = $(profiles_sap_libsap_a_SOURCES) \
++ 	$(tools_cltest_SOURCES) $(tools_gap_tester_SOURCES) \
++ 	$(tools_gatt_service_SOURCES) $(tools_hci_tester_SOURCES) \
++ 	$(tools_hciattach_SOURCES) $(tools_hciconfig_SOURCES) \
+++	$(tools_bluetooth_6lowpand_SOURCES) \
++ 	$(tools_hcidump_SOURCES) tools/hcieventmask.c \
++ 	tools/hcisecfilter.c $(tools_hcitool_SOURCES) \
++ 	$(tools_hex2hcd_SOURCES) tools/hid2hci.c tools/hwdb.c \
++@@ -1594,6 +1600,7 @@ DIST_SOURCES = $(am__profiles_sap_libsap_a_SOURCES_DIST) \
++ 	$(am__tools_hci_tester_SOURCES_DIST) \
++ 	$(am__tools_hciattach_SOURCES_DIST) \
++ 	$(am__tools_hciconfig_SOURCES_DIST) \
+++	$(am__tools_bluetooth_6lowpand_SOURCES_DIST) \
++ 	$(am__tools_hcidump_SOURCES_DIST) tools/hcieventmask.c \
++ 	tools/hcisecfilter.c $(am__tools_hcitool_SOURCES_DIST) \
++ 	$(am__tools_hex2hcd_SOURCES_DIST) tools/hid2hci.c tools/hwdb.c \
++@@ -2199,6 +2206,7 @@ unit_tests = $(am__append_32) unit/test-eir unit/test-uuid \
++ @TOOLS_TRUE@tools_hciconfig_LDADD = lib/libbluetooth-internal.la
++ @TOOLS_TRUE@tools_hcitool_SOURCES = tools/hcitool.c src/oui.h src/oui.c
++ @TOOLS_TRUE@tools_hcitool_LDADD = lib/libbluetooth-internal.la @UDEV_LIBS@
+++@TOOLS_TRUE@tools_bluetooth_6lowpand_LDADD = lib/libbluetooth-internal.la src/libshared-mainloop.la
++ @TOOLS_TRUE@tools_hcidump_SOURCES = tools/hcidump.c \
++ @TOOLS_TRUE@				tools/parser/parser.h tools/parser/parser.c \
++ @TOOLS_TRUE@				tools/parser/lmp.c \
++@@ -4211,6 +4219,11 @@ tools/parser/bpa.$(OBJEXT): tools/parser/$(am__dirstamp) \
++ tools/hcidump$(EXEEXT): $(tools_hcidump_OBJECTS) $(tools_hcidump_DEPENDENCIES) $(EXTRA_tools_hcidump_DEPENDENCIES) tools/$(am__dirstamp)
++ 	@rm -f tools/hcidump$(EXEEXT)
++ 	$(AM_V_CCLD)$(LINK) $(tools_hcidump_OBJECTS) $(tools_hcidump_LDADD) $(LIBS)
+++tools/bluetooth_6lowpand.$(OBJEXT): tools/$(am__dirstamp) \
+++	tools/$(DEPDIR)/$(am__dirstamp)
+++tools/bluetooth_6lowpand$(EXEEXT): $(tools_bluetooth_6lowpand_OBJECTS) $(tools_bluetooth_6lowpand_DEPENDENCIES) $(EXTRA_tools_bluetooth_6lowpand_DEPENDENCIES) tools/$(am__dirstamp)
+++	@rm -f tools/bluetooth_6lowpand$(EXEEXT)
+++	$(AM_V_CCLD)$(LINK) $(tools_bluetooth_6lowpand_OBJECTS) $(tools_bluetooth_6lowpand_LDADD) $(LIBS)
++ tools/hcieventmask.$(OBJEXT): tools/$(am__dirstamp) \
++ 	tools/$(DEPDIR)/$(am__dirstamp)
++ tools/hcieventmask$(EXEEXT): $(tools_hcieventmask_OBJECTS) $(tools_hcieventmask_DEPENDENCIES) $(EXTRA_tools_hcieventmask_DEPENDENCIES) tools/$(am__dirstamp)
++@@ -4932,6 +4945,7 @@ mostlyclean-compile:
++ 	-rm -f tools/hciattach_tialt.$(OBJEXT)
++ 	-rm -f tools/hciconfig.$(OBJEXT)
++ 	-rm -f tools/hcidump.$(OBJEXT)
+++	-rm -f tools/bluetooth_6lowpand.$(OBJEXT)
++ 	-rm -f tools/hcieventmask.$(OBJEXT)
++ 	-rm -f tools/hcisecfilter.$(OBJEXT)
++ 	-rm -f tools/hcitool.$(OBJEXT)
++@@ -5366,6 +5380,7 @@ distclean-compile:
++ @AMDEP_TRUE@@am__include@ @am__quote@tools/$(DEPDIR)/hciattach_tialt.Po@am__quote@
++ @AMDEP_TRUE@@am__include@ @am__quote@tools/$(DEPDIR)/hciconfig.Po@am__quote@
++ @AMDEP_TRUE@@am__include@ @am__quote@tools/$(DEPDIR)/hcidump.Po@am__quote@
+++@AMDEP_TRUE@@am__include@ @am__quote@tools/$(DEPDIR)/bluetooth_6lowpand.Po@am__quote@
++ @AMDEP_TRUE@@am__include@ @am__quote@tools/$(DEPDIR)/hcieventmask.Po@am__quote@
++ @AMDEP_TRUE@@am__include@ @am__quote@tools/$(DEPDIR)/hcisecfilter.Po@am__quote@
++ @AMDEP_TRUE@@am__include@ @am__quote@tools/$(DEPDIR)/hcitool.Po@am__quote@
++diff --git a/Makefile.tools b/Makefile.tools
++index 833f67a..f5f7fd7 100644
++--- a/Makefile.tools
+++++ b/Makefile.tools
++@@ -122,7 +122,8 @@ if TOOLS
++ bin_PROGRAMS += tools/hciattach tools/hciconfig tools/hcitool tools/hcidump \
++ 			tools/rfcomm tools/rctest tools/l2test tools/l2ping \
++ 			tools/sdptool tools/ciptool tools/bccmd \
++-			tools/bluemoon tools/hex2hcd tools/mpris-proxy
+++			tools/bluemoon tools/hex2hcd tools/mpris-proxy \
+++			tools/bluetooth_6lowpand
++ 
++ tools_hciattach_SOURCES = tools/hciattach.c tools/hciattach.h \
++ 						tools/hciattach_st.c \
++@@ -189,6 +190,9 @@ tools_bccmd_LDADD = lib/libbluetooth-internal.la
++ tools_bluemoon_SOURCES = tools/bluemoon.c monitor/bt.h
++ tools_bluemoon_LDADD = src/libshared-mainloop.la
++ 
+++tools_bluetooth_6lowpand_SOURCES = tools/bluetooth_6lowpand.c
+++tools_bluetooth_6lowpand_LDADD = lib/libbluetooth-internal.la src/libshared-mainloop.la
+++
++ tools_hex2hcd_SOURCES = tools/hex2hcd.c
++ 
++ tools_mpris_proxy_SOURCES = tools/mpris-proxy.c
++diff --git a/tools/bluetooth_6lowpand.c b/tools/bluetooth_6lowpand.c
++new file mode 100644
++index 0000000..533a808
 +--- /dev/null
 ++++ b/tools/bluetooth_6lowpand.c
-+@@ -0,0 +1,1254 @@
-++/* Copyright (c) 2015 Nordic Semiconductor. All Rights Reserved.
++@@ -0,0 +1,1271 @@
+++/* Copyright (c) 2015, Nordic Semiconductor
+++ * All rights reserved.
 ++ *
-++ * The information contained herein is confidential property of Nordic
-++ * Semiconductor ASA.Terms and conditions of usage are described in detail
-++ * in NORDIC SEMICONDUCTOR STANDARD SOFTWARE LICENSE AGREEMENT.
+++ * Redistribution and use in source and binary forms, with or without
+++ * modification, are permitted provided that the following conditions
+++ * are met:
 ++ *
-++ * Licensees are granted free, non-transferable use of the information. NO
-++ * WARRANTY of ANY KIND is provided. This heading must NOT be removed from
-++ * the file.
+++ * 1. Redistributions of source code must retain the above copyright
+++ *    notice, this list of conditions and the following disclaimer.
 ++ *
-++ * $$
+++ * 2. Redistributions in binary form must reproduce the above copyright
+++ *    notice, this list of conditions and the following disclaimer in the
+++ *    documentation and/or other materials provided with the distribution.
+++ *
+++ * 3. Neither the name of the Institute nor the names of its contributors
+++ *    may be used to endorse or promote products derived from this software
+++ *    without specific prior written permission.
+++ *
+++ * THIS SOFTWARE IS PROVIDED BY THE INSTITUTE AND CONTRIBUTORS ``AS IS'' AND
+++ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+++ * ARE DISCLAIMED.  IN NO EVENT SHALL THE INSTITUTE OR CONTRIBUTORS BE LIABLE
+++ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+++ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+++ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+++ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+++ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+++ * SUCH DAMAGE.
 ++ */
+++
 ++#include <stdio.h>
 ++#include <stdbool.h>
 ++#include <errno.h>
@@ -96,44 +224,44 @@ index 0000000..4654f84
 ++#define DEBUG_PRINT(...)
 ++#endif
 ++
-++#define DEFAULT_SCANNING_WINDOW	  5
+++#define DEFAULT_SCANNING_WINDOW   5
 ++#define DEFAULT_SCANNING_INTERVAL 10
-++#define MAX_SCANNING_WINDOW	  30
-++#define MAX_SCANNING_INTERVAL	  300
+++#define MAX_SCANNING_WINDOW       30
+++#define MAX_SCANNING_INTERVAL     300
 ++
-++#define MAX_BLE_CONN		  8
-++#define IPSP_UUID		  0x1820 /* IPSP service UUID */
+++#define MAX_BLE_CONN              8
+++#define IPSP_UUID                 0x1820 /* IPSP service UUID */
 ++#define NORDIC_COMPANY_ID         0x0059 /* 16-bit uuid of Nordic Company */
 ++
-++#define EIR_FLAGS		  0x01  /* flags */
-++#define EIR_UUID16_SOME		  0x02  /* 16-bit UUID, more available */
-++#define EIR_UUID16_ALL		  0x03  /* 16-bit UUID, all listed */
-++#define EIR_UUID32_SOME		  0x04  /* 32-bit UUID, more available */
-++#define EIR_UUID32_ALL		  0x05  /* 32-bit UUID, all listed */
-++#define EIR_UUID128_SOME	  0x06  /* 128-bit UUID, more available */
-++#define EIR_UUID128_ALL		  0x07  /* 128-bit UUID, all listed */
-++#define EIR_NAME_SHORT		  0x08  /* shortened local name */
-++#define EIR_NAME_COMPLETE	  0x09  /* complete local name */
-++#define EIR_TX_POWER		  0x0A  /* transmit power level */
-++#define EIR_DEVICE_ID		  0x10  /* device ID */
+++#define EIR_FLAGS                 0x01  /* flags */
+++#define EIR_UUID16_SOME           0x02  /* 16-bit UUID, more available */
+++#define EIR_UUID16_ALL            0x03  /* 16-bit UUID, all listed */
+++#define EIR_UUID32_SOME           0x04  /* 32-bit UUID, more available */
+++#define EIR_UUID32_ALL            0x05  /* 32-bit UUID, all listed */
+++#define EIR_UUID128_SOME          0x06  /* 128-bit UUID, more available */
+++#define EIR_UUID128_ALL           0x07  /* 128-bit UUID, all listed */
+++#define EIR_NAME_SHORT            0x08  /* shortened local name */
+++#define EIR_NAME_COMPLETE         0x09  /* complete local name */
+++#define EIR_TX_POWER              0x0A  /* transmit power level */
+++#define EIR_DEVICE_ID             0x10  /* device ID */
 ++#define EIR_MANUF_SPECIFIC_DATA   0xFF  /* manufacture specific data */
 ++
-++#define DEVICE_NAME_LEN		  30
-++#define DEVICE_ADDR_LEN		  18
+++#define DEVICE_NAME_LEN           30
+++#define DEVICE_ADDR_LEN           18
 ++
-++#define CONTROLLER_PATH		  "/sys/kernel/debug/bluetooth/6lowpan_control"
-++#define CONFIG_PATH		  "/etc/bluetooth/bluetooth_6lowpand.conf"
-++#define CONFIG_SWP_PATH		  "/etc/bluetooth/bluetooth_6lowpand.conf.swp"
-++#define CONFIG_LINE_MAX		  256
+++#define CONTROLLER_PATH           "/sys/kernel/debug/bluetooth/6lowpan_control"
+++#define CONFIG_PATH               "/etc/bluetooth/bluetooth_6lowpand.conf"
+++#define CONFIG_SWP_PATH           "/etc/bluetooth/bluetooth_6lowpand.conf.swp"
+++#define CONFIG_LINE_MAX           256
 ++
-++#define AUTH_SSID_MAX_LEN	  16  /* 16 characters of Service Set Identifier. */
-++#define AUTH_KEY_LEN		  6   /* Currently passkey is used instead of OOB. Key has to have exactly 6 numeric character. */
+++#define AUTH_SSID_MAX_LEN         16  /* 16 characters of Service Set Identifier. */
+++#define AUTH_KEY_LEN              6   /* Currently passkey is used instead of OOB. Key has to have exactly 6 numeric character. */
 ++
-++#define WIFI_CONFIG_PATH	  "/etc/config/wireless"
-++#define WIFI_CMD_SSID		  "uci get wireless.@wifi-iface[%d].ssid"
-++#define WIFI_CMD_KEY		  "uci get wireless.@wifi-iface[%d].key"
-++#define KEY_MAX_LEN		  6
-++#define BUFF_SIZE		  64
+++#define WIFI_CONFIG_PATH          "/etc/config/wireless"
+++#define WIFI_CMD_SSID             "uci get wireless.@wifi-iface[%d].ssid"
+++#define WIFI_CMD_KEY              "uci get wireless.@wifi-iface[%d].key"
+++#define KEY_MAX_LEN               6
+++#define BUFF_SIZE                 64
 ++
 ++/* Possible commisioning authentication. */
 ++enum commissioning_auth_t {
@@ -1304,109 +1432,3 @@ index 0000000..4654f84
 ++
 ++	return 0;
 ++}
-+--- a/Makefile.tools
-++++ b/Makefile.tools
-+@@ -122,7 +122,8 @@ if TOOLS
-+ bin_PROGRAMS += tools/hciattach tools/hciconfig tools/hcitool tools/hcidump \
-+ 			tools/rfcomm tools/rctest tools/l2test tools/l2ping \
-+ 			tools/sdptool tools/ciptool tools/bccmd \
-+-			tools/bluemoon tools/hex2hcd tools/mpris-proxy
-++			tools/bluemoon tools/hex2hcd tools/mpris-proxy \
-++			tools/bluetooth_6lowpand
-+ 
-+ tools_hciattach_SOURCES = tools/hciattach.c tools/hciattach.h \
-+ 						tools/hciattach_st.c \
-+@@ -189,6 +190,9 @@ tools_bccmd_LDADD = lib/libbluetooth-int
-+ tools_bluemoon_SOURCES = tools/bluemoon.c monitor/bt.h
-+ tools_bluemoon_LDADD = src/libshared-mainloop.la
-+ 
-++tools_bluetooth_6lowpand_SOURCES = tools/bluetooth_6lowpand.c
-++tools_bluetooth_6lowpand_LDADD = lib/libbluetooth-internal.la src/libshared-mainloop.la
-++
-+ tools_hex2hcd_SOURCES = tools/hex2hcd.c
-+ 
-+ tools_mpris_proxy_SOURCES = tools/mpris-proxy.c
-+--- a/Makefile.in
-++++ b/Makefile.in
-+@@ -123,7 +123,7 @@ DIST_COMMON = README $(am__configure_dep
-+ @EXPERIMENTAL_TRUE@	tools/bneptest tools/mcaptest tools/cltest \
-+ @EXPERIMENTAL_TRUE@	tools/oobtest tools/seq2bseq tools/ibeacon \
-+ @EXPERIMENTAL_TRUE@	tools/btgatt-client tools/btgatt-server
-+-@TOOLS_TRUE@am__append_17 = tools/hciattach tools/hciconfig tools/hcitool tools/hcidump \
-++@TOOLS_TRUE@am__append_17 = tools/hciattach tools/hciconfig tools/hcitool tools/bluetooth_6lowpand tools/hcidump \
-+ @TOOLS_TRUE@			tools/rfcomm tools/rctest tools/l2test tools/l2ping \
-+ @TOOLS_TRUE@			tools/sdptool tools/ciptool tools/bccmd \
-+ @TOOLS_TRUE@			tools/bluemoon tools/hex2hcd tools/mpris-proxy
-+@@ -383,7 +383,7 @@ src_libshared_mainloop_la_OBJECTS =  \
-+ @CLIENT_TRUE@am__EXEEXT_1 = client/bluetoothctl$(EXEEXT)
-+ @MONITOR_TRUE@am__EXEEXT_2 = monitor/btmon$(EXEEXT)
-+ @TOOLS_TRUE@am__EXEEXT_3 = tools/hciattach$(EXEEXT) \
-+-@TOOLS_TRUE@	tools/hciconfig$(EXEEXT) tools/hcitool$(EXEEXT) \
-++@TOOLS_TRUE@	tools/hciconfig$(EXEEXT) tools/hcitool$(EXEEXT) tools/bluetooth_6lowpand$(EXEEXT) \
-+ @TOOLS_TRUE@	tools/hcidump$(EXEEXT) tools/rfcomm$(EXEEXT) \
-+ @TOOLS_TRUE@	tools/rctest$(EXEEXT) tools/l2test$(EXEEXT) \
-+ @TOOLS_TRUE@	tools/l2ping$(EXEEXT) tools/sdptool$(EXEEXT) \
-+@@ -1191,6 +1191,9 @@ am__tools_hcitool_SOURCES_DIST = tools/h
-+ @TOOLS_TRUE@	src/oui.$(OBJEXT)
-+ tools_hcitool_OBJECTS = $(am_tools_hcitool_OBJECTS)
-+ @TOOLS_TRUE@tools_hcitool_DEPENDENCIES = lib/libbluetooth-internal.la
-++tools_bluetooth_6lowpand_SOURCES = tools/bluetooth_6lowpand.c
-++tools_bluetooth_6lowpand_OBJECTS = tools/bluetooth_6lowpand.$(OBJEXT)
-++@TOOLS_TRUE@tools_bluetooth_6lowpand_DEPENDENCIES = lib/libbluetooth-internal.la
-+ am__tools_hex2hcd_SOURCES_DIST = tools/hex2hcd.c
-+ @TOOLS_TRUE@am_tools_hex2hcd_OBJECTS = tools/hex2hcd.$(OBJEXT)
-+ tools_hex2hcd_OBJECTS = $(am_tools_hex2hcd_OBJECTS)
-+@@ -1518,7 +1521,7 @@ SOURCES = $(profiles_sap_libsap_a_SOURCE
-+ 	$(tools_btsnoop_SOURCES) tools/ciptool.c \
-+ 	$(tools_cltest_SOURCES) $(tools_gap_tester_SOURCES) \
-+ 	$(tools_gatt_service_SOURCES) $(tools_hci_tester_SOURCES) \
-+-	$(tools_hciattach_SOURCES) $(tools_hciconfig_SOURCES) \
-++	$(tools_hciattach_SOURCES) $(tools_bluetooth_6lowpand_SOURCES) $(tools_hciconfig_SOURCES) \
-+ 	$(tools_hcidump_SOURCES) tools/hcieventmask.c \
-+ 	tools/hcisecfilter.c $(tools_hcitool_SOURCES) \
-+ 	$(tools_hex2hcd_SOURCES) tools/hid2hci.c tools/hwdb.c \
-+@@ -1594,7 +1597,7 @@ DIST_SOURCES = $(am__profiles_sap_libsap
-+ 	$(am__tools_hci_tester_SOURCES_DIST) \
-+ 	$(am__tools_hciattach_SOURCES_DIST) \
-+ 	$(am__tools_hciconfig_SOURCES_DIST) \
-+-	$(am__tools_hcidump_SOURCES_DIST) tools/hcieventmask.c \
-++	$(am__tools_hcidump_SOURCES_DIST) $(am__tools_bluetooth_6lowpand_SOURCES_DIST) tools/hcieventmask.c \
-+ 	tools/hcisecfilter.c $(am__tools_hcitool_SOURCES_DIST) \
-+ 	$(am__tools_hex2hcd_SOURCES_DIST) tools/hid2hci.c tools/hwdb.c \
-+ 	$(am__tools_ibeacon_SOURCES_DIST) \
-+@@ -2199,6 +2202,7 @@ unit_tests = $(am__append_32) unit/test-
-+ @TOOLS_TRUE@tools_hciconfig_LDADD = lib/libbluetooth-internal.la
-+ @TOOLS_TRUE@tools_hcitool_SOURCES = tools/hcitool.c src/oui.h src/oui.c
-+ @TOOLS_TRUE@tools_hcitool_LDADD = lib/libbluetooth-internal.la @UDEV_LIBS@
-++@TOOLS_TRUE@tools_bluetooth_6lowpand_LDADD = lib/libbluetooth-internal.la src/libshared-mainloop.la
-+ @TOOLS_TRUE@tools_hcidump_SOURCES = tools/hcidump.c \
-+ @TOOLS_TRUE@				tools/parser/parser.h tools/parser/parser.c \
-+ @TOOLS_TRUE@				tools/parser/lmp.c \
-+@@ -4211,6 +4215,11 @@ tools/parser/bpa.$(OBJEXT): tools/parser
-+ tools/hcidump$(EXEEXT): $(tools_hcidump_OBJECTS) $(tools_hcidump_DEPENDENCIES) $(EXTRA_tools_hcidump_DEPENDENCIES) tools/$(am__dirstamp)
-+ 	@rm -f tools/hcidump$(EXEEXT)
-+ 	$(AM_V_CCLD)$(LINK) $(tools_hcidump_OBJECTS) $(tools_hcidump_LDADD) $(LIBS)
-++tools/bluetooth_6lowpand.$(OBJEXT): tools/$(am__dirstamp) \
-++	tools/$(DEPDIR)/$(am__dirstamp)
-++tools/bluetooth_6lowpand$(EXEEXT): $(tools_bluetooth_6lowpand_OBJECTS) $(tools_bluetooth_6lowpand_DEPENDENCIES) $(EXTRA_tools_bluetooth_6lowpand_DEPENDENCIES) tools/$(am__dirstamp)
-++	@rm -f tools/bluetooth_6lowpand$(EXEEXT)
-++	$(AM_V_CCLD)$(LINK) $(tools_bluetooth_6lowpand_OBJECTS) $(tools_bluetooth_6lowpand_LDADD) $(LIBS)
-+ tools/hcieventmask.$(OBJEXT): tools/$(am__dirstamp) \
-+ 	tools/$(DEPDIR)/$(am__dirstamp)
-+ tools/hcieventmask$(EXEEXT): $(tools_hcieventmask_OBJECTS) $(tools_hcieventmask_DEPENDENCIES) $(EXTRA_tools_hcieventmask_DEPENDENCIES) tools/$(am__dirstamp)
-+@@ -4932,6 +4941,7 @@ mostlyclean-compile:
-+ 	-rm -f tools/hciattach_tialt.$(OBJEXT)
-+ 	-rm -f tools/hciconfig.$(OBJEXT)
-+ 	-rm -f tools/hcidump.$(OBJEXT)
-++	-rm -f tools/bluetooth_6lowpand.$(OBJEXT)
-+ 	-rm -f tools/hcieventmask.$(OBJEXT)
-+ 	-rm -f tools/hcisecfilter.$(OBJEXT)
-+ 	-rm -f tools/hcitool.$(OBJEXT)
-+@@ -5366,6 +5376,7 @@ distclean-compile:
-+ @AMDEP_TRUE@@am__include@ @am__quote@tools/$(DEPDIR)/hciattach_tialt.Po@am__quote@
-+ @AMDEP_TRUE@@am__include@ @am__quote@tools/$(DEPDIR)/hciconfig.Po@am__quote@
-+ @AMDEP_TRUE@@am__include@ @am__quote@tools/$(DEPDIR)/hcidump.Po@am__quote@
-++@AMDEP_TRUE@@am__include@ @am__quote@tools/$(DEPDIR)/bluetooth_6lowpand.Po@am__quote@
-+ @AMDEP_TRUE@@am__include@ @am__quote@tools/$(DEPDIR)/hcieventmask.Po@am__quote@
-+ @AMDEP_TRUE@@am__include@ @am__quote@tools/$(DEPDIR)/hcisecfilter.Po@am__quote@
-+ @AMDEP_TRUE@@am__include@ @am__quote@tools/$(DEPDIR)/hcitool.Po@am__quote@

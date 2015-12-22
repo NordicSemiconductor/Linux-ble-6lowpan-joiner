@@ -123,11 +123,10 @@ How to Build
 
  -  Apply patch
 
-        $ cp ../../patches/openwrt/bluetooth_6lowpand_5.30-1.patch feeds/packages/
-        $ cd feeds/packages/
-        $ git apply bluetooth_6lowpand_5.30-1.patch
-        $ cd ../../
+        $ git apply ../../patches/openwrt/bluetooth_6lowpand_5.30-1.patch
 
+	# Apply the temporary patch for openssl, in order to find a source packet.
+	$ git apply ../../patches/openwrt/openssl.patch 
 
  -  Configure build options in menuconfig
 
