@@ -97,8 +97,7 @@ How to Build
 
         $ cp ../bluetooth_6lowpand.init /etc/init.d/bluetooth_6lowpand
         $ chmod 755 /etc/init.d/bluetooth_6lowpand
-        $ mkdir /etc/config
-        $ touch /etc/config/bluetooth_6lowpand.conf
+        $ touch /etc/bluetooth/bluetooth_6lowpand.conf
 
 ### How to build for OpenWrt:
 

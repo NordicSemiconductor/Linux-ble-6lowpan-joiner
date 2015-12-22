@@ -61,44 +61,44 @@
 #define DEBUG_PRINT(...)
 #endif
 
-#define DEFAULT_SCANNING_WINDOW	  5
+#define DEFAULT_SCANNING_WINDOW   5
 #define DEFAULT_SCANNING_INTERVAL 10
-#define MAX_SCANNING_WINDOW	  30
-#define MAX_SCANNING_INTERVAL	  300
+#define MAX_SCANNING_WINDOW       30
+#define MAX_SCANNING_INTERVAL     300
 
-#define MAX_BLE_CONN		  8
-#define IPSP_UUID		  0x1820 /* IPSP service UUID */
+#define MAX_BLE_CONN              8
+#define IPSP_UUID                 0x1820 /* IPSP service UUID */
 #define NORDIC_COMPANY_ID         0x0059 /* 16-bit uuid of Nordic Company */
 
-#define EIR_FLAGS		  0x01  /* flags */
-#define EIR_UUID16_SOME		  0x02  /* 16-bit UUID, more available */
-#define EIR_UUID16_ALL		  0x03  /* 16-bit UUID, all listed */
-#define EIR_UUID32_SOME		  0x04  /* 32-bit UUID, more available */
-#define EIR_UUID32_ALL		  0x05  /* 32-bit UUID, all listed */
-#define EIR_UUID128_SOME	  0x06  /* 128-bit UUID, more available */
-#define EIR_UUID128_ALL		  0x07  /* 128-bit UUID, all listed */
-#define EIR_NAME_SHORT		  0x08  /* shortened local name */
-#define EIR_NAME_COMPLETE	  0x09  /* complete local name */
-#define EIR_TX_POWER		  0x0A  /* transmit power level */
-#define EIR_DEVICE_ID		  0x10  /* device ID */
+#define EIR_FLAGS                 0x01  /* flags */
+#define EIR_UUID16_SOME           0x02  /* 16-bit UUID, more available */
+#define EIR_UUID16_ALL            0x03  /* 16-bit UUID, all listed */
+#define EIR_UUID32_SOME           0x04  /* 32-bit UUID, more available */
+#define EIR_UUID32_ALL            0x05  /* 32-bit UUID, all listed */
+#define EIR_UUID128_SOME          0x06  /* 128-bit UUID, more available */
+#define EIR_UUID128_ALL           0x07  /* 128-bit UUID, all listed */
+#define EIR_NAME_SHORT            0x08  /* shortened local name */
+#define EIR_NAME_COMPLETE         0x09  /* complete local name */
+#define EIR_TX_POWER              0x0A  /* transmit power level */
+#define EIR_DEVICE_ID             0x10  /* device ID */
 #define EIR_MANUF_SPECIFIC_DATA   0xFF  /* manufacture specific data */
 
-#define DEVICE_NAME_LEN		  30
-#define DEVICE_ADDR_LEN		  18
+#define DEVICE_NAME_LEN           30
+#define DEVICE_ADDR_LEN           18
 
-#define CONTROLLER_PATH		  "/sys/kernel/debug/bluetooth/6lowpan_control"
-#define CONFIG_PATH		  "/etc/config/bluetooth_6lowpand.conf"
-#define CONFIG_SWP_PATH		  "/etc/config/bluetooth_6lowpand.conf.swp"
-#define CONFIG_LINE_MAX		  256
+#define CONTROLLER_PATH           "/sys/kernel/debug/bluetooth/6lowpan_control"
+#define CONFIG_PATH               "/etc/bluetooth/bluetooth_6lowpand.conf"
+#define CONFIG_SWP_PATH           "/etc/bluetooth/bluetooth_6lowpand.conf.swp"
+#define CONFIG_LINE_MAX           256
 
-#define AUTH_SSID_MAX_LEN	  16  /* 16 characters of Service Set Identifier. */
-#define AUTH_KEY_LEN		  6   /* Currently passkey is used instead of OOB. Key has to have exactly 6 numeric character. */
+#define AUTH_SSID_MAX_LEN         16  /* 16 characters of Service Set Identifier. */
+#define AUTH_KEY_LEN              6   /* Currently passkey is used instead of OOB. Key has to have exactly 6 numeric character. */
 
-#define WIFI_CONFIG_PATH	  "/etc/config/wireless"
-#define WIFI_CMD_SSID		  "uci get wireless.@wifi-iface[%d].ssid"
-#define WIFI_CMD_KEY		  "uci get wireless.@wifi-iface[%d].key"
-#define KEY_MAX_LEN		  6
-#define BUFF_SIZE		  64
+#define WIFI_CONFIG_PATH          "/etc/config/wireless"
+#define WIFI_CMD_SSID             "uci get wireless.@wifi-iface[%d].ssid"
+#define WIFI_CMD_KEY              "uci get wireless.@wifi-iface[%d].key"
+#define KEY_MAX_LEN               6
+#define BUFF_SIZE                 64
 
 /* Possible commisioning authentication. */
 enum commissioning_auth_t {
