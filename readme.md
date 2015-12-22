@@ -78,8 +78,8 @@ How to Build
  -  Apply the patch
 
         $ cd src/bluez
-        $ cp ../../patches/ubuntu/bluetooth_6lowpand_5.30-1_1.0.0.patch .
-        $ git apply bluetooth_6lowpand_5.30-1_1.0.0.patch
+        $ cp ../../patches/ubuntu/bluetooth_6lowpand_5.30-1.patch .
+        $ git apply bluetooth_6lowpand_5.30-1.patch
 
 
  -  Build Bluez with the daemon
@@ -124,9 +124,9 @@ How to Build
 
  -  Apply patch
 
-        $ cp ../../patches/openwrt/bluetooth_6lowpand_5.30-1_1.0.0.patch feeds/packages/
+        $ cp ../../patches/openwrt/bluetooth_6lowpand_5.30-1.patch feeds/packages/
         $ cd feeds/packages/
-        $ git apply bluetooth_6lowpand_5.30-1_1.0.0.patch
+        $ git apply bluetooth_6lowpand_5.30-1.patch
         $ cd ../../
 
 
