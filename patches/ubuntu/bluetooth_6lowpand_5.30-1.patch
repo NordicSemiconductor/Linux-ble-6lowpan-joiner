@@ -24,10 +24,10 @@ index 833f67a..f5f7fd7 100644
  tools_mpris_proxy_SOURCES = tools/mpris-proxy.c
 diff --git a/tools/bluetooth_6lowpand.c b/tools/bluetooth_6lowpand.c
 new file mode 100644
-index 0000000..533a808
+index 0000000..2e91f42
 --- /dev/null
 +++ b/tools/bluetooth_6lowpand.c
-@@ -0,0 +1,1271 @@
+@@ -0,0 +1,1283 @@
 +/* Copyright (c) 2015, Nordic Semiconductor
 + * All rights reserved.
 + *
@@ -73,6 +73,7 @@ index 0000000..533a808
 +#include <unistd.h>
 +#include <sys/ioctl.h>
 +#include <ctype.h>
++#include <time.h>
 +
 +#include "lib/bluetooth.h"
 +#include "lib/hci.h"
@@ -499,7 +500,7 @@ index 0000000..533a808
 +	uint8_t scan_type = 0x01; /* Active scanning. */
 +	uint8_t filter_policy = 0x00;
 +	uint16_t interval = htobs(0x0010);
-+	uint16_t window = htobs(0x0010);
++	uint16_t window = htobs(0x0004);
 +	uint8_t filter_dup = 0x01;
 +
 +	unsigned char buf[HCI_MAX_EVENT_SIZE], *ptr;
@@ -510,6 +511,11 @@ index 0000000..533a808
 +	int poll_ret;
 +	bool scan_ret = false;
 +	int err;
++	time_t start_time;
++	time_t curr_time;
++	double running_time;
++
++	start_time = time(NULL);
 +
 +	/* Scan BLE devices */
 +	err = hci_le_set_scan_parameters(dd, scan_type, interval, window, own_type, filter_policy, 10000);
@@ -552,6 +558,12 @@ index 0000000..533a808
 +		char addr[DEVICE_ADDR_LEN];
 +		char name[DEVICE_NAME_LEN];
 +
++		curr_time = time(NULL);
++		running_time = difftime(curr_time, start_time);
++
++		if (running_time > timeout)
++			goto done;
++
 +		memset(name, 0, sizeof(name));
 +		memset(addr, 0, sizeof(addr));
 +		memset(buf, 0, sizeof(buf));
@@ -559,7 +571,7 @@ index 0000000..533a808
 +		pollfd.fd = dd;
 +		pollfd.events = POLLIN;
 +
-+		poll_ret = poll(&pollfd, 1, timeout*1000);
++		poll_ret = poll(&pollfd, 1, (timeout - running_time)*1000);
 +		if (poll_ret < 0) {
 +			printf("poll hci dev error\n");
 +			goto done;

@@ -43,6 +43,7 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <ctype.h>
+#include <time.h>
 
 #include "lib/bluetooth.h"
 #include "lib/hci.h"
@@ -469,7 +470,7 @@ static bool scan_ipsp_device(int dd, unsigned int timeout, char *dev_name, char 
 	uint8_t scan_type = 0x01; /* Active scanning. */
 	uint8_t filter_policy = 0x00;
 	uint16_t interval = htobs(0x0010);
-	uint16_t window = htobs(0x0010);
+	uint16_t window = htobs(0x0004);
 	uint8_t filter_dup = 0x01;
 
 	unsigned char buf[HCI_MAX_EVENT_SIZE], *ptr;
@@ -480,6 +481,11 @@ static bool scan_ipsp_device(int dd, unsigned int timeout, char *dev_name, char 
 	int poll_ret;
 	bool scan_ret = false;
 	int err;
+	time_t start_time;
+	time_t curr_time;
+	double running_time;
+
+	start_time = time(NULL);
 
 	/* Scan BLE devices */
 	err = hci_le_set_scan_parameters(dd, scan_type, interval, window, own_type, filter_policy, 10000);
@@ -522,6 +528,12 @@ static bool scan_ipsp_device(int dd, unsigned int timeout, char *dev_name, char 
 		char addr[DEVICE_ADDR_LEN];
 		char name[DEVICE_NAME_LEN];
 
+		curr_time = time(NULL);
+		running_time = difftime(curr_time, start_time);
+
+		if (running_time > timeout)
+			goto done;
+
 		memset(name, 0, sizeof(name));
 		memset(addr, 0, sizeof(addr));
 		memset(buf, 0, sizeof(buf));
@@ -529,7 +541,7 @@ static bool scan_ipsp_device(int dd, unsigned int timeout, char *dev_name, char 
 		pollfd.fd = dd;
 		pollfd.events = POLLIN;
 
-		poll_ret = poll(&pollfd, 1, timeout*1000);
+		poll_ret = poll(&pollfd, 1, (timeout - running_time)*1000);
 		if (poll_ret < 0) {
 			printf("poll hci dev error\n");
 			goto done;
