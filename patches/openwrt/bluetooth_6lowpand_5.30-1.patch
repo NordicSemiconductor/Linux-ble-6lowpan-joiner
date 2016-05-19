@@ -45,10 +45,10 @@ index 0000000..cd9b3b4
 +}
 diff --git a/feeds/packages/utils/bluez/patches/202-bluetooth_6lowpand.patch b/feeds/packages/utils/bluez/patches/202-bluetooth_6lowpand.patch
 new file mode 100644
-index 0000000..f7cda14
+index 0000000..2e8c4e9
 --- /dev/null
 +++ b/feeds/packages/utils/bluez/patches/202-bluetooth_6lowpand.patch
-@@ -0,0 +1,1395 @@
+@@ -0,0 +1,1394 @@
 +diff --git a/Makefile.in b/Makefile.in
 +index f3e1df3..6dbb929 100644
 +--- a/Makefile.in
@@ -157,10 +157,10 @@ index 0000000..f7cda14
 + tools_mpris_proxy_SOURCES = tools/mpris-proxy.c
 +diff --git a/tools/bluetooth_6lowpand.c b/tools/bluetooth_6lowpand.c
 +new file mode 100644
-+index 0000000..2e91f42
++index 0000000..b232f86
 +--- /dev/null
 ++++ b/tools/bluetooth_6lowpand.c
-+@@ -0,0 +1,1283 @@
++@@ -0,0 +1,1282 @@
 ++/* Copyright (c) 2015, Nordic Semiconductor
 ++ * All rights reserved.
 ++ *
@@ -736,12 +736,11 @@ index 0000000..f7cda14
 ++
 ++		ba2str(&info->bdaddr, addr);
 ++		if (parse_ip_service(info->data, info->length, name, sizeof(name) - 1)) {
-++			DEBUG_PRINT("Find IPSP supported device %s %s\n", name, addr);
+++			DEBUG_PRINT("Found IPSP supported device %s %s\n", name, addr);
 ++			memcpy(dev_name, name, sizeof(name));
 ++			memcpy(dev_addr, addr, sizeof(addr));
 ++			if (use_whitelist && (check_whitelist(addr) == false)) {
-++				sleep(1);
-++				timeout--;
+++				/* Nothing to do. Check whitelist for next entry. */
 ++			} else {
 ++				scan_ret = true;
 ++				break;

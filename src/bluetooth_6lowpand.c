@@ -573,12 +573,11 @@ static bool scan_ipsp_device(int dd, unsigned int timeout, char *dev_name, char 
 
 		ba2str(&info->bdaddr, addr);
 		if (parse_ip_service(info->data, info->length, name, sizeof(name) - 1)) {
-			DEBUG_PRINT("Find IPSP supported device %s %s\n", name, addr);
+			DEBUG_PRINT("Found IPSP supported device %s %s\n", name, addr);
 			memcpy(dev_name, name, sizeof(name));
 			memcpy(dev_addr, addr, sizeof(addr));
 			if (use_whitelist && (check_whitelist(addr) == false)) {
-				sleep(1);
-				timeout--;
+				/* Nothing to do. Check whitelist for next entry. */
 			} else {
 				scan_ret = true;
 				break;
