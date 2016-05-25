@@ -44,7 +44,7 @@ endef
 
 define Package/bluetooth-6lowpand/install
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_DATA) ./files/bluetooth_6lowpand.init $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/bluetooth_6lowpand.init $(1)/etc/init.d/bluetooth_6lowpand
 
 	$(INSTALL_DIR) $(1)/etc/bluetooth
 	$(INSTALL_DATA) ./files/bluetooth_6lowpand.conf $(1)/etc/bluetooth
