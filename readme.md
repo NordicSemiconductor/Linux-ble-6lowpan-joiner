@@ -31,11 +31,12 @@ Changes Note
 Known Issues
 ===================================================
 
- - bluetoothd daemon has to be killed to allow passkey/oob pairing. 
-   The command below should be executed before running the bluetooth_6lowpand daemon
+ - bluetoothd daemon has to be killed and HCI interface has to be reset to allow passkey/oob pairing. 
+   The commands below should be executed before running the bluetooth_6lowpand daemon
    with the -a option if the bluetoothd daemon is running.
 
         $ killall bluetoothd
+        $ hciconfig hci0 reset
 
 
  - If all the devices are disconnected, the 6lowpan network interface on OpenWRT 
