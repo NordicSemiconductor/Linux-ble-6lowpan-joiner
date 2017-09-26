@@ -17,6 +17,7 @@ case $1 in
 	killall bluetoothd
 	sleep 1
 	hciconfig hci0 reset
+	sleep 1
 	bluetooth_6lowpand -w 3 -t 5 -a $2 -d
   ;;
   stop)
