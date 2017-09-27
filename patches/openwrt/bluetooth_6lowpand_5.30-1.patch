@@ -33,9 +33,10 @@ index 0000000..cd9b3b4
 +	modprobe bluetooth_6lowpan
 +	sleep 1
 +	echo 35 > /sys/kernel/debug/bluetooth/6lowpan_psm
++	killall bluetoothd
++	sleep 1
 +	hciconfig hci0 reset
 +	sleep 1
-+	killall bluetoothd
 +	bluetooth_6lowpand -w 3 -t 5 -a -d
 +}
 +
